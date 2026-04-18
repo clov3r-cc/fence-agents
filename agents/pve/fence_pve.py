@@ -217,7 +217,10 @@ def main():
 	all_opt["ipaddr"]["shortdesc"] = "IP Address or Hostname of a node " +\
 		"within the Proxmox cluster."
 
-	options = check_input(device_opt, process_input(device_opt))
+	parsed_opts = process_input(device_opt)
+	if "--pve-api-token" in parsed_opts and "--pve-api-token-secret" in parsed_opts:
+		device_opt.append("no_password")
+	options = check_input(device_opt, parsed_opts)
 	docs = {}
 	docs["shortdesc"] = "Fencing agent for the Proxmox Virtual Environment"
 	docs["longdesc"] = "fence_pve is a Power Fencing agent for virtual machines \
