@@ -73,3 +73,7 @@ agents/virt/config/libsimpleconfig.a
 agents/virt/fence_virtd.service
 agents/virt/server/fence_virtd
 fence-virt-*
+
+# PyInstaller
+build/
+fence_pve.spec
