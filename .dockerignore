@@ -49,12 +49,10 @@ lib/__pycache__
 
 # ビルド不要なファイル
 tests
-doc
 mise.toml
 renovate.json
 README.md
 fence-agents.spec.in
-fence-agents.pc.in
 *.orig
 *.rej
 *.swp
