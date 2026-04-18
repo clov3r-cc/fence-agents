@@ -102,8 +102,11 @@ def send_cmd(options, cmd, post=None):
 	conn.setopt(pycurl.HTTPGET, 1)
 	conn.setopt(pycurl.URL, url.encode("ascii"))
 	if "auth" in options and options["auth"] is not None:
-		conn.setopt(pycurl.COOKIE, options["auth"]["ticket"])
-		conn.setopt(pycurl.HTTPHEADER, [options["auth"]["CSRF_token"]])
+		if "api_token" in options["auth"]:
+			conn.setopt(pycurl.HTTPHEADER, [options["auth"]["api_token"]])
+		else:
+			conn.setopt(pycurl.COOKIE, options["auth"]["ticket"])
+			conn.setopt(pycurl.HTTPHEADER, [options["auth"]["CSRF_token"]])
 	if post is not None:
 		if "skiplock" in post:
 			conn.setopt(conn.CUSTOMREQUEST, 'POST')
@@ -181,11 +184,33 @@ def main():
 			"(Default: qemu)",
 		"order": 2
 	}
+	all_opt["pve_api_token"] = {
+		"getopt" : "T:",
+		"longopt" : "pve-api-token",
+		"help" : "-T, --pve-api-token=[token]    "
+			"API token (format: USER@REALM!TOKENID)",
+		"required" : "0",
+		"shortdesc" : "Proxmox API token in format USER@REALM!TOKENID. "
+			"If specified, --pve-api-token-secret must also be provided "
+			"and username/password are not required.",
+		"order": 2
+	}
+	all_opt["pve_api_token_secret"] = {
+		"getopt" : "K:",
+		"longopt" : "pve-api-token-secret",
+		"help" : "-K, --pve-api-token-secret=[secret] "
+			"API token secret (UUID)",
+		"required" : "0",
+		"shortdesc" : "Proxmox API token secret (UUID). "
+			"Required when --pve-api-token is specified.",
+		"order": 2
+	}
 
-	device_opt = ["ipaddr", "login", "passwd", "ssl", "web", "port", "pve_node", "pve_node_auto", "node_name", "vmtype", "method"]
+	device_opt = ["ipaddr", "login", "passwd", "ssl", "web", "port", "pve_node", "pve_node_auto", "node_name", "vmtype", "method", "pve_api_token", "pve_api_token_secret"]
 
 	all_opt["login"]["required"] = "0"
 	all_opt["login"]["default"] = "root@pam"
+	all_opt["passwd"]["required"] = "0"
 	all_opt["ipport"]["default"] = "8006"
 	all_opt["ssl"]["default"] = "1"
 	all_opt["port"]["shortdesc"] = "Id of the virtual machine."
@@ -222,9 +247,14 @@ acting as nodes in a virtualized cluster."
 
 	options["url"] = "https://" + options["--ip"] + ":" + str(options["--ipport"]) + "/api2/json/"
 
-	options["auth"] = get_ticket(options)
-	if options["auth"] is None:
-		fail(EC_LOGIN_DENIED)
+	if options.get("--pve-api-token") and options.get("--pve-api-token-secret"):
+		options["auth"] = {
+			"api_token": "Authorization: PVEAPIToken=" + options["--pve-api-token"] + "=" + options["--pve-api-token-secret"]
+		}
+	else:
+		options["auth"] = get_ticket(options)
+		if options["auth"] is None:
+			fail(EC_LOGIN_DENIED)
 
 	# Workaround for unsupported API call on some Proxmox hosts
 	outlets = get_outlet_list(None, options)        # Unsupported API-Call will result in value: None
