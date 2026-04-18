@@ -1,0 +1,9 @@
+[tasks.build]
+description = "Build fence_pve single binary"
+run = """
+podman build -t fence-pve-tmp-image .
+podman create --name fence-pve-tmp fence-pve-tmp-image
+podman cp fence-pve-tmp:/fence_pve /tmp/fence_pve
+podman rm fence-pve-tmp
+podman rmi fence-pve-tmp-image
+"""

@@ -1,0 +1,58 @@
+# VCS
+.git
+.jj
+.github
+
+# autoconf/automake 生成物（ビルド中に再生成する）
+autom4te.cache
+configure
+configure~
+aclocal.m4
+config.log
+config.status
+config.guess
+config.sub
+libtool
+ltmain.sh
+compile
+depcomp
+install-sh
+missing
+
+# Makefile 生成物
+Makefile
+Makefile.in
+*/Makefile
+*/Makefile.in
+
+# ビルド成果物
+dist
+build
+fence_pve
+fence_pve.spec
+agents/pve/fence_pve
+agents/pve/fence_pve.8
+agents/pve/fence_pve.wiki
+lib/fencing.py
+lib/fencing_snmp.py
+lib/azure_fence.py
+*.pc
+
+# ビルド中に生成するので既存を無視
+.tarball-version
+.version
+
+# Python キャッシュ
+*.pyc
+__pycache__
+lib/__pycache__
+
+# ビルド不要なファイル
+tests
+mise.toml
+renovate.json
+README.md
+fence-agents.spec.in
+*.orig
+*.rej
+*.swp
