@@ -1,4 +1,4 @@
-FROM opensuse/leap:15.6
+FROM opensuse/leap:16.0
 
 RUN zypper in -y \
     git \
@@ -7,19 +7,18 @@ RUN zypper in -y \
     libtool \
     make \
     gcc \
-    libcorosync-devel \
+    corosync-devel \
     libxslt1 \
     libxslt-tools \
-    python3-devel \
-    python3-httplib2 \
-    python3-pexpect \
-    python3-pycurl \
-    python3-requests \
-    python3-suds-jurko \
+    python313 \
+    python313-devel \
+    python313-pip \
+    python313-httplib2 \
+    python313-pexpect \
+    python313-pycurl \
+    python313-requests \
+    python313-boto3 \
     python3-openwsman \
-    python3-boto3 \
-    python3-novaclient \
-    python3-keystoneclient \
     mozilla-nss-devel \
     mozilla-nspr-devel \
     libvirt-devel \
@@ -27,7 +26,12 @@ RUN zypper in -y \
     flex \
     bison \
     libuuid-devel \
-    systemd
+    systemd && \
+    pip3 install \
+    suds-community \
+    python-novaclient \
+    python-keystoneclient \
+    pyinstaller
 
 WORKDIR /code
 VOLUME /code
